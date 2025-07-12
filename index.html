@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Interpretabilidade de CLASSIFICAÇÕES - Agnews - Redirecionando...</title>
+ 
+  <!-- Firebase SDK Clássico: app e database -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+  <h2>Interpretabilidade de CLASSIFICAÇÕES - Agnews - Redirecionando...</h2>
+
+  <script>
+    // ✅ Configuração do Firebase
+    var firebaseConfig = {
+    apiKey: "AIzaSyDhflZ7bGPHJkStJK0r3bggX4ZIMnap6Ks",
+    authDomain: "follow-url-acm.firebaseapp.com",
+    databaseURL: "https://follow-url-acm-default-rtdb.firebaseio.com",
+    projectId: "follow-url-acm",
+    storageBucket: "follow-url-acm.firebasestorage.app",
+    messagingSenderId: "720094133431",
+    appId: "1:720094133431:web:3035603fe1631e060be132"
+    };
+
+    // ✅ Inicializa Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
+
+    // ✅ Acessa os dados em 'urls'
+    db.ref("urls").once("value").then(snapshot => {
+      var urls = snapshot.val();
+      var menor = null;
+      var chaveMenor = null;
+
+      // ✅ Encontra a URL com menor número de acessos
+      for (var chave in urls) {
+        if (menor === null || urls[chave].acessos < menor) {
+          menor = urls[chave].acessos;
+          chaveMenor = chave;
+        }
+      }
+
+      // ✅ Redireciona para a URL com menos acessos
+      if (chaveMenor !== null) {
+        var link = urls[chaveMenor].link;
+        db.ref("urls/" + chaveMenor + "/acessos").set(menor + 1);
+        window.location.href = link;
+      } else {
+        // 🔁 Fallback: redireciona para a primeira URL da lista
+        var chaves = Object.keys(urls);
+        if (chaves.length > 0) {
+          var primeiraChave = chaves[0];
+          var fallbackLink = urls[primeiraChave].link;
+
+          // Atualiza acessos da primeira
+          db.ref("urls/" + primeiraChave + "/acessos").set(urls[primeiraChave].acessos + 1);
+          window.location.href = fallbackLink;
+        } else {
+          document.body.innerHTML = "<p>Erro: Nenhuma URL cadastrada no banco.</p>";
+        }
+      }
+    }).catch(error => {
+      document.body.innerHTML = "<p>Erro ao acessar o banco: " + error + "</p>";
+    });
+  </script>
+</body>
+</html>
+
