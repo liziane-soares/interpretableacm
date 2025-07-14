@@ -12,15 +12,17 @@
   <h2>Interpretabilidade de CLASSIFICAÇÕES - ACM - Redirecionando...</h2>
 
   <script>
+    var fallbackURL = "https://pt.surveymonkey.com/r/2MVRTBS";
+
     // ✅ Configuração do Firebase
     var firebaseConfig = {
-    apiKey: "AIzaSyDhflZ7bGPHJkStJK0r3bggX4ZIMnap6Ks",
-    authDomain: "follow-url-acm.firebaseapp.com",
-    databaseURL: "https://follow-url-acm-default-rtdb.firebaseio.com",
-    projectId: "follow-url-acm",
-    storageBucket: "follow-url-acm.firebasestorage.app",
-    messagingSenderId: "720094133431",
-    appId: "1:720094133431:web:3035603fe1631e060be132"
+      apiKey: "AIzaSyDhflZ7bGPHJkStJK0r3bggX4ZIMnap6Ks",
+      authDomain: "follow-url-acm.firebaseapp.com",
+      databaseURL: "https://follow-url-acm-default-rtdb.firebaseio.com",
+      projectId: "follow-url-acm",
+      storageBucket: "follow-url-acm.firebasestorage.app",
+      messagingSenderId: "720094133431",
+      appId: "1:720094133431:web:3035603fe1631e060be132"
     };
 
     // ✅ Inicializa Firebase
@@ -53,17 +55,17 @@
           var primeiraChave = chaves[0];
           var fallbackLink = urls[primeiraChave].link;
 
-          // Atualiza acessos da primeira
           db.ref("urls/" + primeiraChave + "/acessos").set(urls[primeiraChave].acessos + 1);
           window.location.href = fallbackLink;
         } else {
-          document.body.innerHTML = "<p>Erro: Nenhuma URL cadastrada no banco.</p>";
+          // ❌ Nenhuma URL no banco: redireciona para fallback externo
+          window.location.href = fallbackURL;
         }
       }
     }).catch(error => {
-      document.body.innerHTML = "<p>Erro ao acessar o banco: " + error + "</p>";
+      console.error("Erro ao acessar o banco:", error);
+      window.location.href = fallbackURL;
     });
   </script>
 </body>
 </html>
-
